@@ -53,7 +53,7 @@ class SWHear():
         for testrate in [44100]:
             if self.valid_test(device,testrate):
                 return testrate
-        print("SOMETHING'S WRONG! I can't figure out how to use DEV",device)
+        print(("SOMETHING'S WRONG! I can't figure out how to use DEV",device))
         return None
 
     def valid_test(self,device,rate=44100):
@@ -82,7 +82,7 @@ class SWHear():
         if len(mics)==0:
             print("no microphone devices found!")
         else:
-            print("found %d microphone devices: %s"%(len(mics),mics))
+            print(("found %d microphone devices: %s"%(len(mics),mics)))
         return mics
 
     ### SETUP AND SHUTDOWN
@@ -123,7 +123,7 @@ class SWHear():
 
         except Exception as E:
             print(" -- exception! terminating...")
-            print(E,"\n"*5)
+            print((E,"\n"*5))
             self.keepRecording=False
         if self.keepRecording:
             self.stream_thread_new()
@@ -157,6 +157,6 @@ if __name__=="__main__":
     while True:
         while lastRead==ear.chunksRead:
             time.sleep(.01)
-        print(ear.chunksRead,len(ear.data))
+        print((ear.chunksRead,len(ear.data)))
         lastRead=ear.chunksRead
     print("DONE")
