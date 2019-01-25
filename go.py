@@ -4,6 +4,7 @@ from PyQt5 import QtGui, QtCore
 
 import sys
 import ui_main
+import scipy.signal
 import numpy as np
 import pyqtgraph
 from swhear import SWHear
@@ -32,10 +33,21 @@ class ExampleApp(QtGui.QMainWindow, ui_main.Ui_MainWindow):
                 # self.grFFT.plotItem.setRange(yRange=[0,self.maxFFT])
                 self.grFFT.plotItem.setRange(yRange=[0, 1])
             self.pbLevel.setValue(1000 * pcmMax / self.maxPCM)
+
+            # ---- Peak finding in frequency domain -----------------
+            peaks, _ = scipy.signal.find_peaks(self.ear.fft, height=0.1*self.maxFFT)
+            # ---------------------------------------------------------
+
             pen = pyqtgraph.mkPen(color='b')
+            peak_pen = pyqtgraph.mkPen(color='g')
+
             self.grPCM.plot(self.ear.datax, self.ear.data, pen=pen, clear=True)
             pen = pyqtgraph.mkPen(color='r')
             self.grFFT.plot(self.ear.fftx, self.ear.fft / self.maxFFT, pen=pen, clear=True)
+
+            # plot peaks
+            self.grFFT.plot(self.ear.fftx[peaks], self.ear.fft[peaks]/self.maxFFT, pen=peak_pen, symbol='x', clear=False)
+
         QtCore.QTimer.singleShot(1, self.update)  # QUICKLY repeat
 
 
