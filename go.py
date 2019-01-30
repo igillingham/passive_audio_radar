@@ -10,20 +10,47 @@ import pyqtgraph
 from swhear import SWHear
 
 
-class ExampleApp(QtGui.QMainWindow, ui_main.Ui_MainWindow):
+class PassiveDoppler(QtGui.QMainWindow, ui_main.Ui_MainWindow):
     def __init__(self, parent=None):
         pyqtgraph.setConfigOption('background', 'w')  # before loading widget
-        super(ExampleApp, self).__init__(parent)
+        super(PassiveDoppler, self).__init__(parent)
+
+        self.mode_ambient = False
         self.setupUi(self)
+        self.btnAmbient.clicked.connect(self.on_click)
+        self.btnReset.clicked.connect(self.on_reset)
         self.grFFT.plotItem.showGrid(True, True, 0.7)
         self.grPCM.plotItem.showGrid(True, True, 0.7)
         self.maxFFT = 0
         self.maxPCM = 0
-        self.ear = SWHear(rate=44100, updatesPerSecond=5)
+        # self.ear = SWHear(rate=44100, updatesPerSecond=5)
+        self.ear = SWHear(rate=4000, updatesPerSecond=20)
+        self.ear.signalSamplesUpdate.connect(self.update_sample_count)
         self.ear.stream_start()
 
+    @QtCore.pyqtSlot()
+    def on_click(self):
+        self.mode_ambient = not self.mode_ambient
+        self.ear.ambient_sample_mode = self.mode_ambient
+
+    @QtCore.pyqtSlot()
+    def on_reset(self):
+        self.mode_ambient = False
+        self.ear.reset()
+
+    def acquire_ambient(self):
+        pass
+
+    @QtCore.pyqtSlot(int)
+    def update_sample_count(self, count):
+        print("update_sample_count(): {0:d}".format(count))
+        self.lcdSamples.display(count)
+
     def update(self):
-        if not self.ear.data is None and not self.ear.fft is None:
+        if self.mode_ambient:
+            self.acquire_ambient()
+
+        elif (self.ear.data is not None) and (self.ear.fft is not None):
             pcmMax = np.max(np.abs(self.ear.data))
             if pcmMax > self.maxPCM:
                 self.maxPCM = pcmMax
@@ -46,14 +73,14 @@ class ExampleApp(QtGui.QMainWindow, ui_main.Ui_MainWindow):
             self.grFFT.plot(self.ear.fftx, self.ear.fft / self.maxFFT, pen=pen, clear=True)
 
             # plot peaks
-            self.grFFT.plot(self.ear.fftx[peaks], self.ear.fft[peaks]/self.maxFFT, pen=peak_pen, symbol='x', clear=False)
+            self.grFFT.plot(self.ear.fftx[peaks], self.ear.fft[peaks]/self.maxFFT, pen=None, symbol='o', clear=False)
 
         QtCore.QTimer.singleShot(1, self.update)  # QUICKLY repeat
 
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
-    form = ExampleApp()
+    form = PassiveDoppler()
     form.show()
     form.update()  # start with something
     app.exec_()
