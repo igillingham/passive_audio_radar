@@ -128,7 +128,7 @@
             </size>
            </property>
            <property name="currentIndex">
-            <number>0</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="tab_cal">
             <attribute name="title">
@@ -197,6 +197,11 @@ Listen</string>
               </item>
              </layout>
             </widget>
+           </widget>
+           <widget class="QWidget" name="tab">
+            <attribute name="title">
+             <string>Audio Interface Info</string>
+            </attribute>
            </widget>
            <widget class="QWidget" name="tab_pars">
             <attribute name="title">

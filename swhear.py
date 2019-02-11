@@ -58,7 +58,7 @@ class SWHear(QtCore.QObject):
         self.ambient_sample_mode = False
 
     def __del__(self):
-        self.p.terminate()
+        self.close()
 
     def reset(self):
         self.__ambient = None
@@ -202,6 +202,7 @@ class SWHear(QtCore.QObject):
         self.stream = self.p.open(format=pyaudio.paInt16, channels=1,
                                   rate=self.rate, input=True, frames_per_buffer=self.chunk)
         self.stream_thread_new()
+
 
 
 if __name__ == "__main__":

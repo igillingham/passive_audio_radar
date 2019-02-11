@@ -24,7 +24,7 @@ class PassiveDoppler(QtGui.QMainWindow, ui_main.Ui_MainWindow):
         self.maxFFT = 0
         self.maxPCM = 0
         # self.ear = SWHear(rate=44100, updatesPerSecond=5)
-        self.ear = SWHear(rate=4000, updatesPerSecond=20)
+        self.ear = SWHear(rate=4000, updatesPerSecond=10)
         self.ear.signalSamplesUpdate.connect(self.update_sample_count)
         self.ear.stream_start()
 
